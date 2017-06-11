@@ -22,7 +22,10 @@
 
 
 ## SingleTypeExpandableVerticalLinearLayout
-
+![image](https://github.com/OwnLeiX/OwnView/blob/master/exampleImages/SingleTypeExpandableVerticalLinearLayout1.png)
+![image](https://github.com/OwnLeiX/OwnView/blob/master/exampleImages/SingleTypeExpandableVerticalLinearLayout2.png)
+![image](https://github.com/OwnLeiX/OwnView/blob/master/exampleImages/SingleTypeExpandableVerticalLinearLayout3.png)
+![image](https://github.com/OwnLeiX/OwnView/blob/master/exampleImages/SingleTypeExpandableVerticalLinearLayout4.png)
 只支持单一item类型的可展开垂直线性布局。如果需要(比如存在于ListView中或是频繁刷新)，可以自己设置复用池。
 
           singleTypeExpandableVerticalLinearLayout.setSingleTypeViewRecyclePool(pool);
