@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="#FF333333"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <lx.own.view.RipplePlayerView
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        app:coverStroke="true"
+        app:rippleColor="#FFFF00FF"
+        app:ripplePadding="6dp"
+        app:rippleRange="10dp"
+        app:rippleWidth="3dp"
+        app:strokeColor="#FF000000"
+        app:rippleTime="50"
+        app:strokeWidth="1dp" />
+
+    <lx.own.view.RipplePlayerView
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="left"
+        app:coverStroke="true"
+        app:rippleColor="#FF0000FF"
+        app:ripplePadding="7dp"
+        app:rippleWidth="7dp"
+        app:rippleRange="14dp"
+        app:rippleTime="100"
+        app:strokeColor="#FF000000"
+        app:strokeWidth="1dp" />
+
+    <lx.own.view.RipplePlayerView
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="right"
+        app:coverStroke="true"
+        app:rippleColor="#FFFFFFFF"
+        app:ripplePadding="9dp"
+        app:rippleWidth="3dp"
+        app:rippleRange="4.5dp"
+        app:rippleTime="150"
+        app:strokeColor="#FF000000"
+        app:strokeWidth="1dp" />
+
+    <lx.own.view.RipplePlayerView
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="left|bottom"
+        app:coverStroke="true"
+        app:rippleColor="#FFFF0000"
+        app:ripplePadding="12dp"
+        app:rippleWidth="3dp"
+        app:rippleRange="20dp"
+        app:rippleTime="200"
+        app:strokeColor="#FF000000"
+        app:strokeWidth="1dp" />
+
+    <lx.own.view.RipplePlayerView
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="right|bottom"
+        app:coverStroke="true"
+        app:rippleColor="#FF330099"
+        app:ripplePadding="18dp"
+        app:rippleWidth="5dp"
+        app:rippleRange="7dp"
+        app:rippleTime="10"
+        app:strokeColor="#FF000000"
+        app:strokeWidth="1dp" />
+</FrameLayout>

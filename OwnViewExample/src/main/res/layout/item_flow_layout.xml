@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorGray"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/item_tv"
+        android:layout_width="match_parent"
+        android:background="#222222"
+        android:textColor="@color/colorWhite"
+        android:layout_height="30dp"
+        android:gravity="center_vertical"
+        tools:text="This is item in ListView."/>
+
+    <lx.own.view.SingleTypeFlowLayout
+        android:id="@+id/item_flowLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#888888"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        app:flowLayout_maxLines="3"
+        app:flowLayout_horizontalPadding="10dp"
+        app:flowLayout_verticalPadding="5dp"/>
+
+</LinearLayout>
