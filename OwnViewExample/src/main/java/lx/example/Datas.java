@@ -141,7 +141,7 @@ public interface Datas {
             "Zamorano", "Zanetti Grana Padano", "Zanetti Parmigiano Reggiano"
     };
 
-    public static final String[] NAMES = new String[] { "宋江", "卢俊义", "吴用",
+    public static final String[] NAMES = new String[]{"宋江", "卢俊义", "吴用",
             "公孙胜", "关胜", "林冲", "秦明", "呼延灼", "花荣", "柴进", "李应", "朱仝", "鲁智深",
             "武松", "董平", "张清", "杨志", "徐宁", "索超", "戴宗", "刘唐", "李逵", "史进", "穆弘",
             "雷横", "李俊", "阮小二", "张横", "阮小五", " 张顺", "阮小七", "杨雄", "石秀", "解珍",
@@ -152,5 +152,18 @@ public interface Datas {
             "陶宗旺", "宋清", "乐和", "龚旺", "丁得孙", "穆春", "曹正", "宋万", "杜迁", "薛永", "施恩",
             "周通", "李忠", "杜兴", "汤隆", "邹渊", "邹润", "朱富", "朱贵", "蔡福", "蔡庆", "李立",
             "李云", "焦挺", "石勇", "孙新", "顾大嫂", "张青", "孙二娘", " 王定六", "郁保四", "白胜",
-            "时迁", "段景柱" };
+            "时迁", "段景柱"};
+
+    String[] SENTENCES = new String[]{"There is one word too many in this sentence.",
+            "One needs 3 things to be truly happy living in the world: some thing to do, some one to love, some thing to hope for.",
+            "No matter how bad your heart has been broken, the world doesn’t stop for your grief. The sun comes right back up the next day.",
+    "If you wish to succeed, you should use persistence as your good friend, experience as your reference, prudence as your brother and hope as your sentry.",
+    "a friend in need is a friend indeed.",
+    " I have to remind myself that some birds don’t mean to be caged. Their feathers are just too bright. And when they fly away, the part of you that knows it was a sin to lock them up. Does rejoice. Still, the place you live in is that much more drab and empty that they’re gone. I guess I just miss my friend.",
+    "I love waking up in the morning and not knowing what’s going to happen, or who I’m going to meet, where I’m going to wind up.",
+    "Each in its own way was unforgettable. It would be difficult to …Rome. By all means, Rome. I will cherish my visit here in memory, as long as I live!",
+    "Get busy living or get busy dieing.",
+    "life was like a box a chocolates, never know what you're gonna get.",
+    "You don’t understand!I could a had class.I could a been a contender.I could’ve been some body,instead of a bum,which is what I am.",
+    "Winner winner,Chicken dinner!"};
 }

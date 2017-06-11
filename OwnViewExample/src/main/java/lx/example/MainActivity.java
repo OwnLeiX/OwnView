@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.RipplePlayerView:
                     break;
                 case R.id.SingleTypeExpandableVerticalLinearLayout:
+                    startActivity(new Intent(MainActivity.this,SingleTypeExpandableVerticalLinearLayoutSample.class));
                     break;
                 case R.id.SingleTypeFlowLayout:
                     startActivity(new Intent(MainActivity.this,FlowLayoutSample.class));

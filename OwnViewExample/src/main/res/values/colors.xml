@@ -8,4 +8,5 @@
     <color name="colorPurple">#FF330099</color>
     <color name="colorGray">#FF444444</color>
     <color name="colorDarkGray">#FF222222</color>
+    <color name="colorLightGray">#FFCCCCCC</color>
 </resources>

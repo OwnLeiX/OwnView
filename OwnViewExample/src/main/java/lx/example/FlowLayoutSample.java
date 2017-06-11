@@ -32,6 +32,8 @@ public class FlowLayoutSample extends AppCompatActivity {
 
     private class InnerAdapter extends BaseAdapter {
 
+        private SingleTypeViewRecyclePool mPool = new SingleTypeViewRecyclePool();
+
         @Override
         public int getCount() {
             return 30;
@@ -51,7 +53,7 @@ public class FlowLayoutSample extends AppCompatActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
             InnerHolder holder;
             if (convertView == null) {
-                holder = new InnerHolder(parent,new SingleTypeViewRecyclePool());
+                holder = new InnerHolder(parent,mPool);
                 convertView = holder.mRoot;
                 convertView.setTag(holder);
             }else {

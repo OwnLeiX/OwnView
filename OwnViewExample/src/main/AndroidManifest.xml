@@ -16,6 +16,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".FlowLayoutSample"/>
+        <activity android:name=".SingleTypeExpandableVerticalLinearLayoutSample"/>
     </application>
 
 </manifest>
