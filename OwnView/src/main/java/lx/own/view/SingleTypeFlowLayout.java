@@ -5,7 +5,6 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -64,8 +63,9 @@ public class SingleTypeFlowLayout extends ViewGroup {
             mWidth = MeasureSpec.getSize(widthMeasureSpec);
             mContentWidth = mWidth - getPaddingLeft() - getPaddingRight();
             reset();
+            View child = null;
             for (int i = 0; i < count; i++) {
-                View child = mAdapter.getView(mRecycler == null ? null : mRecycler.obtain(), i, this);
+                child = mAdapter.getView(mRecycler == null ? null : mRecycler.obtain(), i, this);
                 if (child == null)
                     continue;
                 child.measure(0, 0);
@@ -73,8 +73,8 @@ public class SingleTypeFlowLayout extends ViewGroup {
             }
             mContentHeight = 0;
             if (MeasureSpec.getMode(heightMeasureSpec) != MeasureSpec.EXACTLY) {
-                for (Line mLine : mLines) {
-                    mContentHeight += mLine.getHeight();
+                for (Line line : mLines) {
+                    mContentHeight += line.getHeight();
                 }
                 mContentHeight -= mVerticalPadding;
                 mHeight = mContentHeight + getPaddingBottom() + getPaddingTop();
@@ -96,17 +96,8 @@ public class SingleTypeFlowLayout extends ViewGroup {
             l = mLines.get(line);
         }
         if (l.getViewCount() == 0 || l.getWidth() + child.getMeasuredWidth() + mHorizontalPadding * 3 <= mContentWidth) {
-            ViewParent parent = child.getParent();
-            if (parent != null) {
-                if (parent instanceof ViewGroup && parent != this) {
-                    ((ViewGroup) parent).removeView(child);
-                    addView(child);
-                    mDisplayViews.offer(child);
-                }
-            } else {
-                addView(child);
-                mDisplayViews.offer(child);
-            }
+            addView(child);
+            mDisplayViews.offer(child);
             l.addView(child);
         } else {
             layoutChild(child, line + 1, position);
@@ -114,46 +105,36 @@ public class SingleTypeFlowLayout extends ViewGroup {
     }
 
     private void reset() {
-        if (mRecycler != null) {
-            //			for (int i = 0; i < getChildCount(); i++)
-            //			{
-            //				View child = getChildAt(i);
-            //				removeView(child);
-            //				mRecycler.recycle(child);
-            //			}
-            View child = mDisplayViews.poll();
-            while (child != null) {
-                removeView(child);
-                mRecycler.recycle(child);
-                child = mDisplayViews.poll();
-            }
-        } else {
-            mDisplayViews.clear();
-            removeAllViews();
-        }
+        if (mRecycler != null)
+            mRecycler.recycle(mDisplayViews);
+        mDisplayViews.clear();
+        removeAllViews();
         mLines.clear();
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         int top = getPaddingTop();
-        for (int line = 0; line < mLines.size(); line++) {
-            Line mLine = mLines.get(line);
-            int bottom = top + mLine.getContentHeight();
-            float centerVertical = (top + bottom) / 2.0f;
+        Line line = null;
+        for (int position = 0; position < mLines.size(); position++) {
+            line = mLines.get(position);
+            if (line == null)
+                continue;
+            float centerVertical = (top + top + line.getContentHeight()) / 2.0f;
             int left = mHorizontalPadding + getPaddingLeft();
             //强行拉满每一行
             //			int right = mContentWidth - mHorizontalPadding;
-            //            int superfluousSpace = right - left - mLine.getWidth();
-            //            float singleSuperfluousSpace = superfluousSpace * 1.0f / mLine.getViewCount() / 2.0f;
-            for (View mView : mLine.mViews) {
-                mView.measure(MeasureSpec.makeMeasureSpec(mView.getMeasuredWidth()/* + singleSuperfluousSpace * 2.0f*/, MeasureSpec.EXACTLY),
-                        MeasureSpec.makeMeasureSpec(mView.getMeasuredHeight(), MeasureSpec.EXACTLY));
+            //            int superfluousSpace = right - left - line.getWidth();
+            //            float singleSuperfluousSpace = superfluousSpace * 1.0f / line.getViewCount() / 2.0f;
+            for (View mView : line.mViews) {
+//                mView.measure(MeasureSpec.makeMeasureSpec(mView.getMeasuredWidth() + singleSuperfluousSpace * 2.0f, MeasureSpec.EXACTLY),
+//                        MeasureSpec.makeMeasureSpec(mView.getMeasuredHeight(), MeasureSpec.EXACTLY));
+                int childWidth = mView.getMeasuredWidth();
                 float halfHeight = mView.getMeasuredHeight() / 2.0f;
-                mView.layout(left, (int) (centerVertical - halfHeight), left + mView.getMeasuredWidth(), (int) (centerVertical + halfHeight));
-                left += mView.getMeasuredWidth() + mHorizontalPadding;
+                mView.layout(left, (int) (centerVertical - halfHeight), left + childWidth, (int) (centerVertical + halfHeight));
+                left += childWidth + mHorizontalPadding;
             }
-            top += mLine.getHeight();
+            top += line.getHeight();
         }
     }
 
