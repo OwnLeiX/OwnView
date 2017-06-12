@@ -5,19 +5,19 @@
 ## SingleTypeFlowLayout:
 ![image](https://github.com/OwnLeiX/OwnView/blob/master/exampleImages/SingleTypeFlowLayout.png)
 ![image](https://github.com/OwnLeiX/OwnView/blob/master/exampleImages/SingleTypeFlowLayout2.png)
-只支持单一item类型的流式布局。如果需要(比如存在于ListView中或是频繁刷新)，可以自己设置复用池。
+* 只支持单一item类型的流式布局。如果需要(比如存在于ListView中或是频繁刷新)，可以自己设置复用池。
 
           flowLayout.setSingleTypeViewRecyclePool(pool);
-          
           flowLayout.setAdapter(adapter);
 
 
-在xml文件中可以通过 
+**补充：1.如果item是LinearLayout，其内部的子View不能使用权重。而必须使用固定的宽高或者是WRAP_CONTENT，否则在复用时可能导致尺寸测量异常。**
+
+
+* 在xml文件中可以通过 
 
           app:flowLayout_maxLines="3"设置最大行数
-          
           app:flowLayout_horizontalPadding="10dp"设置行间距
-          
           app:flowLayout_verticalPadding="5dp"设置列间距
 
 
@@ -26,14 +26,14 @@
 ![image](https://github.com/OwnLeiX/OwnView/blob/master/exampleImages/SingleTypeExpandableVerticalLinearLayout2.png)
 ![image](https://github.com/OwnLeiX/OwnView/blob/master/exampleImages/SingleTypeExpandableVerticalLinearLayout3.png)
 ![image](https://github.com/OwnLeiX/OwnView/blob/master/exampleImages/SingleTypeExpandableVerticalLinearLayout4.png)
-只支持单一item类型的可展开垂直线性布局。如果需要(比如存在于ListView中或是频繁刷新)，可以自己设置复用池。
+* 只支持单一item类型的可展开垂直线性布局。如果需要(比如存在于ListView中或是频繁刷新)，可以自己设置复用池。
 
           singleTypeExpandableVerticalLinearLayout.setSingleTypeViewRecyclePool(pool);
           singleTypeExpandableVerticalLinearLayout.setAdapter(adapter);
           singleTypeExpandableVerticalLinearLayout.shrink();
           singleTypeExpandableVerticalLinearLayout.expand();
 
-在xml文件中可以通过
+* 在xml文件中可以通过
 
           app:expandableVerticalLinearLayout_shrinkItemCount="2"设置折叠时的行数
           app:expandableVerticalLinearLayout_hintTextGravity="right"设置提示文本的位置
