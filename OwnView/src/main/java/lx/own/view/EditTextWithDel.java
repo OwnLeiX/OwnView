@@ -2,6 +2,7 @@ package lx.own.view;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -41,7 +42,7 @@ public class EditTextWithDel extends EditText {
 
     private void init() {
         mCurrentRect = new Rect();
-        imgInable = mContext.getResources().getDrawable(R.drawable.icon_delete);
+        imgInable = new ColorDrawable(0xFFFF0000);
         EditTextWithDel.this.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

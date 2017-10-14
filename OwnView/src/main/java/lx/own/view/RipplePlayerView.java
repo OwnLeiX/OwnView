@@ -35,9 +35,9 @@ public class RipplePlayerView extends View {
     private float[] mCurrentRippleRadius;//三道波纹的半径
     private float[] mBitmapLeftAndTop;//中间封面的起始绘制点
 
-    private Paint mRipplePaint, mCoverPaint,mStrokePaint;
-    private int mRippleColor,mStrokeColor;
-    private float mRippleWidth,mStrokeWidth;
+    private Paint mRipplePaint, mCoverPaint, mStrokePaint;
+    private int mRippleColor, mStrokeColor;
+    private float mRippleWidth, mStrokeWidth;
     private float mCoverRadius;//圆形封面半径
     private float mRippleRange;//波纹最远扩散范围
     private float mRipplePercent;
@@ -76,16 +76,17 @@ public class RipplePlayerView extends View {
         mRipplePadding = mRippleWidth * 1.5f;
         mRippleTime = 50;
         if (attrs != null) {
-            TypedArray typedArray = context.obtainStyledAttributes(attrs,R.styleable.RipplePlayerView);
+            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RipplePlayerView);
             if (typedArray != null) {
-                mRippleWidth = typedArray.getDimension(R.styleable.RipplePlayerView_rippleWidth,mRippleWidth);
-                mRippleColor = typedArray.getColor(R.styleable.RipplePlayerView_rippleColor,mRippleColor);
-                mStrokeWidth = typedArray.getDimension(R.styleable.RipplePlayerView_strokeWidth,mStrokeWidth);
-                mStrokeColor = typedArray.getColor(R.styleable.RipplePlayerView_strokeColor,mStrokeColor);
-                isNeedCoverStroke = typedArray.getBoolean(R.styleable.RipplePlayerView_coverStroke,isNeedCoverStroke);
-                mRipplePadding = typedArray.getDimension(R.styleable.RipplePlayerView_ripplePadding,mRippleWidth * 1.5f);
-                mRippleRange = typedArray.getDimension(R.styleable.RipplePlayerView_rippleRange,mRipplePadding * 3);
-                mRippleTime = typedArray.getInt(R.styleable.RipplePlayerView_rippleTime,mRippleTime);
+                mRippleWidth = typedArray.getDimension(R.styleable.RipplePlayerView_rippleWidth, mRippleWidth);
+                mRippleColor = typedArray.getColor(R.styleable.RipplePlayerView_rippleColor, mRippleColor);
+                mStrokeWidth = typedArray.getDimension(R.styleable.RipplePlayerView_strokeWidth, mStrokeWidth);
+                mStrokeColor = typedArray.getColor(R.styleable.RipplePlayerView_strokeColor, mStrokeColor);
+                isNeedCoverStroke = typedArray.getBoolean(R.styleable.RipplePlayerView_coverStroke, isNeedCoverStroke);
+                mRipplePadding = typedArray.getDimension(R.styleable.RipplePlayerView_ripplePadding, mRippleWidth * 1.5f);
+                mRippleRange = typedArray.getDimension(R.styleable.RipplePlayerView_rippleRange, mRipplePadding * 3);
+                mRippleTime = typedArray.getInt(R.styleable.RipplePlayerView_rippleTime, mRippleTime);
+                typedArray.recycle();
             }
         }
     }
@@ -141,7 +142,7 @@ public class RipplePlayerView extends View {
         BitmapFactory.decodeResource(getResources(), resId, options);
         options.inJustDecodeBounds = false;
         options.inSampleSize = calculateInSampleSize(options, mWH[0], mWH[1]);
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.img_cover, options);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), resId, options);
         return getSizedAndRoundedBitmap(bitmap, (int) mCoverRadius * 2);
     }
 
@@ -220,7 +221,7 @@ public class RipplePlayerView extends View {
                 canvas.drawCircle(mHalfWH[0], mHalfWH[1], mCoverRadius, mStrokePaint);
             }
         }
-        mHandler.postDelayed(mInvalidateTask,mRippleTime);
+        mHandler.postDelayed(mInvalidateTask, mRippleTime);
     }
 
     @Override
@@ -235,7 +236,7 @@ public class RipplePlayerView extends View {
     private class InvalidateTask implements Runnable {
         View target;
 
-        public InvalidateTask(View target) {
+        private InvalidateTask(View target) {
             this.target = target;
         }
 
