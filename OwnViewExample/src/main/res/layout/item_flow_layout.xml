@@ -16,7 +16,7 @@
         android:textColor="@color/colorWhite"
         tools:text="This is item in ListView." />
 
-    <lx.own.view.SingleTypeFlowLayout
+    <lx.own.view.online.SingleTypeFlowLayout
         android:id="@+id/item_flowLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

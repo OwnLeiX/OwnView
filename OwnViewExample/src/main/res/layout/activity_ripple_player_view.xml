@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <lx.own.view.RipplePlayerView
+    <lx.own.view.offline.RipplePlayerView
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_gravity="center"
@@ -19,7 +19,7 @@
         app:rippleTime="50"
         app:strokeWidth="1dp" />
 
-    <lx.own.view.RipplePlayerView
+    <lx.own.view.offline.RipplePlayerView
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_gravity="left"
@@ -32,7 +32,7 @@
         app:strokeColor="#FF000000"
         app:strokeWidth="1dp" />
 
-    <lx.own.view.RipplePlayerView
+    <lx.own.view.offline.RipplePlayerView
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_gravity="right"
@@ -45,7 +45,7 @@
         app:strokeColor="#FF000000"
         app:strokeWidth="1dp" />
 
-    <lx.own.view.RipplePlayerView
+    <lx.own.view.offline.RipplePlayerView
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_gravity="left|bottom"
@@ -58,7 +58,7 @@
         app:strokeColor="#FF000000"
         app:strokeWidth="1dp" />
 
-    <lx.own.view.RipplePlayerView
+    <lx.own.view.offline.RipplePlayerView
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_gravity="right|bottom"

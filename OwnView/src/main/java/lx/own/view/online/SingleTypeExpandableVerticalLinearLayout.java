@@ -1,4 +1,4 @@
-package lx.own.view;
+package lx.own.view.online;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lx.own.R;
-import lx.own.view.tools.SingleTypeViewRecyclePool;
+import lx.own.view.online.tools.SingleTypeViewRecyclePool;
 
 /**
  * <b></b>

@@ -1,4 +1,4 @@
-package lx.own.view;
+package lx.own.view.offline;
 
 import android.content.Context;
 import android.graphics.Bitmap;

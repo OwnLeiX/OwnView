@@ -11,8 +11,8 @@ import android.widget.TextView;
 
 import java.util.Random;
 
-import lx.own.view.SingleTypeFlowLayout;
-import lx.own.view.tools.SingleTypeViewRecyclePool;
+import lx.own.view.online.SingleTypeFlowLayout;
+import lx.own.view.online.tools.SingleTypeViewRecyclePool;
 
 /**
  * <p> </p><br/>

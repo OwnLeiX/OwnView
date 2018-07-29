@@ -1,4 +1,4 @@
-package lx.own.view;
+package lx.own.view.offline;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;

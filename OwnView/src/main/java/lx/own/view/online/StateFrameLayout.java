@@ -1,4 +1,4 @@
-package lx.own.view;
+package lx.own.view.online;
 
 import android.content.Context;
 import android.support.annotation.IntDef;

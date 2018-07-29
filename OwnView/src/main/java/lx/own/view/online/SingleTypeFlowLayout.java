@@ -1,4 +1,4 @@
-package lx.own.view;
+package lx.own.view.online;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 import lx.own.R;
-import lx.own.view.tools.SingleTypeViewRecyclePool;
+import lx.own.view.online.tools.SingleTypeViewRecyclePool;
 
 public class SingleTypeFlowLayout extends ViewGroup {
     private ArrayList<Line> mLines;
