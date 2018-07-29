@@ -25,7 +25,7 @@
             android:textColor="@color/colorBlack"
             tools:text="This is item in ListView." />
     </LinearLayout>
-    <lx.own.view.SingleTypeExpandableVerticalLinearLayout
+    <lx.own.view.online.SingleTypeExpandableVerticalLinearLayout
         android:id="@+id/item_expandableVerticalLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
