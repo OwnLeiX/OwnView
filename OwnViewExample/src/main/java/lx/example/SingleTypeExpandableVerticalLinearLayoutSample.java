@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import java.util.Random;
 
-import lx.own.view.SingleTypeExpandableVerticalLinearLayout;
+import lx.own.view.online.SingleTypeExpandableVerticalLinearLayout;
 import lx.own.view.online.tools.SingleTypeViewRecyclePool;
 
 /**
