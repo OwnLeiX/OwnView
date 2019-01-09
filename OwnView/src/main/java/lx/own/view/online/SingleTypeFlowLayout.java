@@ -13,6 +13,13 @@ import lx.own.R;
 import lx.own.view.online.tools.SingleTypeViewRecyclePool;
 
 public class SingleTypeFlowLayout extends ViewGroup {
+
+    private final int FLAG_NEVER_MEASURED = 1;
+    private final int FLAG_CONTENT_CHANGED = 1 << 1;
+    private final int FLAG_SPEC_CHANGED = 1 << 2;
+    private final int FLAG_LAYOUT_AGAIN = 1 << 3;
+
+    private int mFlags = FLAG_NEVER_MEASURED;
     private ArrayList<Line> mLines;
     private LinkedList<View> mDisplayViews;
     private int mWidth, mHeight;
@@ -22,8 +29,10 @@ public class SingleTypeFlowLayout extends ViewGroup {
     private int mVerticalPadding;
 
     private int maxLines = -1;
+    private int preWMeasureSpec, preHMeasureSpec;
     private BaseFlowItemAdapter mAdapter;
     private SingleTypeViewRecyclePool mRecycler;
+    private boolean fillMode = false;
 
     public SingleTypeFlowLayout(Context context) {
         this(context, null);
@@ -51,25 +60,37 @@ public class SingleTypeFlowLayout extends ViewGroup {
                 mHorizontalPadding = typedArray.getDimensionPixelSize(R.styleable.FlowLayout_flowLayout_horizontalPadding, 0);
                 mVerticalPadding = typedArray.getDimensionPixelSize(R.styleable.FlowLayout_flowLayout_verticalPadding, 0);
                 maxLines = typedArray.getInteger(R.styleable.FlowLayout_flowLayout_maxLines, -1);
+                fillMode = typedArray.getBoolean(R.styleable.FlowLayout_flowLayout_fillMode, false);
                 typedArray.recycle();
             }
         }
     }
 
+    private void checkMeasureSpec(int widthMeasureSpec, int heightMeasureSpec) {
+        if (preWMeasureSpec != widthMeasureSpec || preHMeasureSpec != heightMeasureSpec) {
+            mFlags |= FLAG_SPEC_CHANGED;
+            preWMeasureSpec = widthMeasureSpec;
+            preHMeasureSpec = heightMeasureSpec;
+        }
+    }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int count = mAdapter == null ? 0 : mAdapter.getCount();
-        if (count != mDisplayViews.size()) {
+        checkMeasureSpec(widthMeasureSpec, heightMeasureSpec);
+        if ((mFlags & (FLAG_NEVER_MEASURED | FLAG_CONTENT_CHANGED | FLAG_SPEC_CHANGED)) > 0) {
+            mFlags &= ~(FLAG_NEVER_MEASURED | FLAG_CONTENT_CHANGED | FLAG_SPEC_CHANGED);
+            final int count = mAdapter == null ? 0 : mAdapter.getCount();
             mWidth = MeasureSpec.getSize(widthMeasureSpec);
             mContentWidth = mWidth - getPaddingLeft() - getPaddingRight();
-            reset();
+            reset(false);
             View child = null;
+            final int childMeasureSpec = getChildMeasureSpec(MeasureSpec.UNSPECIFIED, 0, LayoutParams.WRAP_CONTENT);
             for (int i = 0; i < count; i++) {
                 child = mAdapter.getView(mRecycler == null ? null : mRecycler.obtain(), i, this);
                 if (child == null)
                     continue;
-                child.measure(0, 0);
-                layoutChild(child, 0, i);
+                child.measure(childMeasureSpec, childMeasureSpec);
+                if (!layoutChild(child, fillMode ? 0 : Math.max(0, mLines.size() - 1), i)) break;
             }
             mContentHeight = 0;
             if (MeasureSpec.getMode(heightMeasureSpec) != MeasureSpec.EXACTLY) {
@@ -81,13 +102,14 @@ public class SingleTypeFlowLayout extends ViewGroup {
             } else {
                 mHeight = MeasureSpec.getSize(heightMeasureSpec);
             }
+            mFlags |= FLAG_LAYOUT_AGAIN;
         }
         setMeasuredDimension(mWidth, mHeight);
     }
 
-    private void layoutChild(View child, int line, int position) {
+    private boolean layoutChild(View child, int line, int position) {
         if (maxLines > 0 && line >= maxLines)
-            return;
+            return false;
         Line l;
         if (mLines.size() <= line) {
             l = new Line(mHorizontalPadding, mVerticalPadding);
@@ -102,18 +124,23 @@ public class SingleTypeFlowLayout extends ViewGroup {
         } else {
             layoutChild(child, line + 1, position);
         }
+        return true;
     }
 
-    private void reset() {
+    private void reset(boolean addFlag) {
         if (mRecycler != null)
             mRecycler.recycle(mDisplayViews);
         mDisplayViews.clear();
         removeAllViews();
         mLines.clear();
+        if (addFlag)
+            mFlags |= FLAG_CONTENT_CHANGED;
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        if ((mFlags & FLAG_LAYOUT_AGAIN) == 0) return;
+        mFlags &= ~FLAG_LAYOUT_AGAIN;
         int top = getPaddingTop();
         Line line = null;
         for (int position = 0; position < mLines.size(); position++) {
@@ -177,8 +204,15 @@ public class SingleTypeFlowLayout extends ViewGroup {
         refresh();
     }
 
+    public void setFillMode(boolean fill) {
+        if (fillMode != fill) {
+            this.fillMode = fill;
+            refresh();
+        }
+    }
+
     private void refresh() {
-        reset();
+        reset(true);
         requestLayout();
     }
 

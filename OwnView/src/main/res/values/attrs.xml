@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="RipplePlayerView">
-        <attr name="ripplePadding" format="dimension"/>
-        <attr name="rippleRange" format="dimension"/>
-        <attr name="rippleWidth" format="dimension"/>
-        <attr name="rippleTime" format="integer"/>
-        <attr name="strokeWidth" format="dimension"/>
-        <attr name="rippleColor" format="color|reference"/>
-        <attr name="strokeColor" format="color|reference"/>
-        <attr name="coverStroke" format="boolean"/>
+        <attr name="ripplePadding" format="dimension" />
+        <attr name="rippleRange" format="dimension" />
+        <attr name="rippleWidth" format="dimension" />
+        <attr name="rippleTime" format="integer" />
+        <attr name="strokeWidth" format="dimension" />
+        <attr name="rippleColor" format="color|reference" />
+        <attr name="strokeColor" format="color|reference" />
+        <attr name="coverStroke" format="boolean" />
     </declare-styleable>
     <declare-styleable name="FlowLayout">
         <attr name="flowLayout_horizontalPadding" format="dimension" />
         <attr name="flowLayout_verticalPadding" format="dimension" />
         <attr name="flowLayout_maxLines" format="integer" />
+        <attr name="flowLayout_fillMode" format="boolean" />
     </declare-styleable>
 
     <declare-styleable name="ExpandableVerticalLinearLayout">
@@ -25,12 +26,12 @@
             <enum name="right" value="-1" />
             <enum name="center" value="0" />
         </attr>
-        <attr name="expandableVerticalLinearLayout_hintTextViewWidth" format="dimension"/>
-        <attr name="expandableVerticalLinearLayout_hintTextViewHeight" format="dimension"/>
-        <attr name="expandableVerticalLinearLayout_hintTextViewPaddingTop" format="dimension"/>
-        <attr name="expandableVerticalLinearLayout_hintTextViewPaddingLeft" format="dimension"/>
-        <attr name="expandableVerticalLinearLayout_hintTextViewPaddingRight" format="dimension"/>
-        <attr name="expandableVerticalLinearLayout_hintTextViewPaddingBottom" format="dimension"/>
-        <attr name="expandableVerticalLinearLayout_shrinkItemCount" format="integer"/>
+        <attr name="expandableVerticalLinearLayout_hintTextViewWidth" format="dimension" />
+        <attr name="expandableVerticalLinearLayout_hintTextViewHeight" format="dimension" />
+        <attr name="expandableVerticalLinearLayout_hintTextViewPaddingTop" format="dimension" />
+        <attr name="expandableVerticalLinearLayout_hintTextViewPaddingLeft" format="dimension" />
+        <attr name="expandableVerticalLinearLayout_hintTextViewPaddingRight" format="dimension" />
+        <attr name="expandableVerticalLinearLayout_hintTextViewPaddingBottom" format="dimension" />
+        <attr name="expandableVerticalLinearLayout_shrinkItemCount" format="integer" />
     </declare-styleable>
 </resources>

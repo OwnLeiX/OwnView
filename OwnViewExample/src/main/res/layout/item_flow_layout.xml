@@ -23,6 +23,7 @@
         android:background="#888888"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
+        app:flowLayout_fillMode="true"
         app:flowLayout_horizontalPadding="10dp"
         app:flowLayout_maxLines="3"
         app:flowLayout_verticalPadding="5dp" />

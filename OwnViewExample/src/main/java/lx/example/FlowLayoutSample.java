@@ -87,7 +87,7 @@ public class FlowLayoutSample extends AppCompatActivity {
 
         void setData(int position){
             tv.setText("This is item " + position + "in ListView.");
-            notifyDataSetChanged();
+//            notifyDataSetChanged();
         }
 
         @Override
