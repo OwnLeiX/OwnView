@@ -2,7 +2,7 @@
 自定义控件合集
 
 
-## SingleTypeFlowLayout:
+## SingleTypeFlowLayout:(因虚构随机数据，在每次setData时都调用了notifyDataSetChanged()导致Demo略卡顿)
 ![image](https://github.com/OwnLeiX/OwnView/blob/master/exampleImages/SingleTypeFlowLayout.png)
 ![image](https://github.com/OwnLeiX/OwnView/blob/master/exampleImages/SingleTypeFlowLayout2.png)
 * 只支持单一item类型的流式布局。如果需要(比如存在于ListView中或是频繁刷新)，可以自己设置复用池。
@@ -19,6 +19,7 @@
           app:flowLayout_maxLines="3"设置最大行数
           app:flowLayout_horizontalPadding="10dp"设置行间距
           app:flowLayout_verticalPadding="5dp"设置列间距
+          app:flowLayout_fillMode="false"设置是否填充之前因距离不够跳过的行
 
 
 ## SingleTypeExpandableVerticalLinearLayout
