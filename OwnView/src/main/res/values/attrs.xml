@@ -15,6 +15,7 @@
         <attr name="flowLayout_verticalPadding" format="dimension" />
         <attr name="flowLayout_maxLines" format="integer" />
         <attr name="flowLayout_fillMode" format="boolean" />
+        <attr name="flowLayout_dividerStartAndEnd" format="boolean" />
     </declare-styleable>
 
     <declare-styleable name="ExpandableVerticalLinearLayout">

@@ -33,6 +33,7 @@ public class SingleTypeFlowLayout extends ViewGroup {
     private BaseFlowItemAdapter mAdapter;
     private SingleTypeViewRecyclePool mRecycler;
     private boolean fillMode = false;
+    private boolean dividerStartAndEnd = false;
 
     public SingleTypeFlowLayout(Context context) {
         this(context, null);
@@ -61,6 +62,7 @@ public class SingleTypeFlowLayout extends ViewGroup {
                 mVerticalPadding = typedArray.getDimensionPixelSize(R.styleable.FlowLayout_flowLayout_verticalPadding, 0);
                 maxLines = typedArray.getInteger(R.styleable.FlowLayout_flowLayout_maxLines, -1);
                 fillMode = typedArray.getBoolean(R.styleable.FlowLayout_flowLayout_fillMode, false);
+                dividerStartAndEnd = typedArray.getBoolean(R.styleable.FlowLayout_flowLayout_dividerStartAndEnd, false);
                 typedArray.recycle();
             }
         }
@@ -84,12 +86,20 @@ public class SingleTypeFlowLayout extends ViewGroup {
             mContentWidth = mWidth - getPaddingLeft() - getPaddingRight();
             reset(false);
             View child = null;
-            final int childMeasureSpec = getChildMeasureSpec(MeasureSpec.UNSPECIFIED, 0, LayoutParams.WRAP_CONTENT);
+            LayoutParams childLayoutParams = null;
+            final int defaultChildMeasureSpec = getChildMeasureSpec(MeasureSpec.UNSPECIFIED, 0, LayoutParams.WRAP_CONTENT);
+            int childWSpec = defaultChildMeasureSpec;
+            int childHSpec = defaultChildMeasureSpec;
             for (int i = 0; i < count; i++) {
                 child = mAdapter.getView(mRecycler == null ? null : mRecycler.obtain(), i, this);
                 if (child == null)
                     continue;
-                child.measure(childMeasureSpec, childMeasureSpec);
+                childLayoutParams = child.getLayoutParams();
+                if (childLayoutParams != null) {
+                    childWSpec = getChildMeasureSpec(MeasureSpec.makeMeasureSpec(mContentWidth, MeasureSpec.EXACTLY), 0, childLayoutParams.width);
+                    childHSpec = getChildMeasureSpec(MeasureSpec.UNSPECIFIED, 0, childLayoutParams.height);
+                }
+                child.measure(childWSpec, childHSpec);
                 if (!layoutChild(child, fillMode ? 0 : Math.max(0, mLines.size() - 1), i)) break;
             }
             mContentHeight = 0;
@@ -98,6 +108,8 @@ public class SingleTypeFlowLayout extends ViewGroup {
                     mContentHeight += line.getHeight();
                 }
                 mContentHeight -= mVerticalPadding;
+                if (mContentHeight < 0)
+                    mContentHeight = 0;
                 mHeight = mContentHeight + getPaddingBottom() + getPaddingTop();
             } else {
                 mHeight = MeasureSpec.getSize(heightMeasureSpec);
@@ -117,7 +129,7 @@ public class SingleTypeFlowLayout extends ViewGroup {
         } else {
             l = mLines.get(line);
         }
-        if (l.getViewCount() == 0 || l.getWidth() + child.getMeasuredWidth() + mHorizontalPadding * 3 <= mContentWidth) {
+        if (l.getViewCount() == 0 || l.getWidth() + child.getMeasuredWidth() + mHorizontalPadding * (dividerStartAndEnd ? 3 : 1) <= mContentWidth) {
             addView(child);
             mDisplayViews.offer(child);
             l.addView(child);
@@ -148,7 +160,7 @@ public class SingleTypeFlowLayout extends ViewGroup {
             if (line == null)
                 continue;
             float centerVertical = (top + top + line.getContentHeight()) / 2.0f;
-            int left = mHorizontalPadding + getPaddingLeft();
+            int left = (dividerStartAndEnd ? mHorizontalPadding : 0) + getPaddingLeft();
             //强行拉满每一行
             //			int right = mContentWidth - mHorizontalPadding;
             //            int superfluousSpace = right - left - line.getWidth();
@@ -207,6 +219,13 @@ public class SingleTypeFlowLayout extends ViewGroup {
     public void setFillMode(boolean fill) {
         if (fillMode != fill) {
             this.fillMode = fill;
+            refresh();
+        }
+    }
+
+    public void setDividerStartAndEnd(boolean dividerStartAndEnd) {
+        if (this.dividerStartAndEnd != dividerStartAndEnd) {
+            this.dividerStartAndEnd = dividerStartAndEnd;
             refresh();
         }
     }
