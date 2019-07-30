@@ -35,4 +35,64 @@
         <attr name="expandableVerticalLinearLayout_hintTextViewPaddingBottom" format="dimension" />
         <attr name="expandableVerticalLinearLayout_shrinkItemCount" format="integer" />
     </declare-styleable>
+
+    <declare-styleable name="SimpleCircleProgressBar">
+        <attr name="simpleCircleProgressBar_color" format="color|reference" />
+        <attr name="simpleCircleProgressBar_shadowColor" format="color|reference" />
+        <attr name="simpleCircleProgressBar_shadowDx" format="dimension" />
+        <attr name="simpleCircleProgressBar_shadowDy" format="dimension" />
+        <attr name="simpleCircleProgressBar_strokeWidth" format="dimension" />
+        <attr name="simpleCircleProgressBar_clockwise" format="boolean" />
+        <attr name="simpleCircleProgressBar_startAngle" format="float" />
+        <attr name="simpleCircleProgressBar_endAngle" format="float" />
+        <attr name="simpleCircleProgressBar_max" format="integer" />
+        <attr name="simpleCircleProgressBar_progress" format="integer" />
+    </declare-styleable>
+
+    <declare-styleable name="LyricView2">
+        <attr name="lyricView2_textSize" format="reference|dimension" />
+        <attr name="lyricView2_textColor" format="reference|color" />
+        <attr name="lyricView2_usedTextColor" format="reference|color" />
+        <attr name="lyricView2_textBold" format="boolean" />
+        <attr name="lyricView2_usedTextBold" format="boolean" />
+        <attr name="lyricView2_signUsedText" format="boolean" />
+        <attr name="lyricView2_maxLines" format="integer" />
+        <attr name="lyricView2_linePadding" format="reference|dimension" />
+        <attr name="lyricView2_safeEdge" format="boolean" />
+        <attr name="lyricView2_overDraw" format="boolean" />
+        <attr name="lyricView2_showFinished" format="boolean" />
+        <attr name="lyricView2_finishedText" format="string|reference" />
+        <attr name="lyricView2_emptyText" format="string|reference" />
+        <attr name="lyricView2_scrollDuration" format="string|reference" />
+        <attr name="lyricView2_contentForceCenter" format="boolean" />
+        <attr name="lyricView2_underwayLineGravity" format="enum">
+            <enum name="top" value="1" />
+            <enum name="center" value="2" />
+            <enum name="bottom" value="3" />
+        </attr>
+    </declare-styleable>
+    <!-- 自动翻转的Layout -->
+    <declare-styleable name="LoopOverturnLayout">
+        <!-- 线条颜色 与 端点颜色(如果pointRadius > 0) -->
+        <attr name="loopOverturnLayout_orientation" format="enum">
+            <enum name="horizontal" value="1" />
+            <enum name="vertical" value="2" />
+        </attr>
+        <attr name="loopOverturnLayout_displayDuration" format="integer" />
+        <attr name="loopOverturnLayout_overturnDuration" format="integer" />
+    </declare-styleable>
+
+    <declare-styleable name="MuteLampView">
+        <attr name="muteLampView_minRadius" format="reference|dimension" />
+        <attr name="muteLampView_maxRadius" format="reference|dimension" />
+        <attr name="muteLampView_pointPadding" format="reference|dimension" />
+        <attr name="muteLampView_color" format="reference|color" />
+        <attr name="muteLampView_duringColor" format="reference|color" />
+        <attr name="muteLampView_pointCount" format="integer" />
+        <attr name="muteLampView_max" format="integer" />
+        <attr name="muteLampView_progress" format="integer" />
+        <attr name="muteLampView_pointDelayPercent" format="float" />
+        <attr name="muteLampView_fadeout" format="boolean" />
+        <attr name="muteLampView_fadeoutTime" format="integer" />
+    </declare-styleable>
 </resources>
