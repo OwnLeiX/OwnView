@@ -69,7 +69,7 @@ public class CircleImageView extends AppCompatImageView {
         mRect.set(0, 0, getWidth(), getHeight());
         canvas.save();
         canvas.setDrawFilter(pdf);
-        mPath.addCircle(getWidth() / 2 > getHeight() / 2 ? getHeight() / 2 : getWidth() / 2, getWidth() / 2, getHeight() / 2, Path.Direction.CCW);
+        mPath.addCircle(getWidth() / 2f > getHeight() / 2f ? getHeight() / 2f : getWidth() / 2f, getWidth() / 2f, getHeight() / 2f, Path.Direction.CCW);
         canvas.clipPath(mPath, Region.Op.REPLACE);
         canvas.drawBitmap(mBitmap, null, mRect, mPaint);
         canvas.restore();

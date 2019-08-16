@@ -562,28 +562,32 @@ public class DragSupportSingleTypeFlowLayout extends SingleTypeFlowLayout {
 
         @Override
         public void onRestoreDraggingItemLocation(View item, int oldX, int oldY, int newX, int newY) {
-            final int translationX = oldX - newX;
-            final int translationY = oldY - newY;
-            item.setTranslationX(translationX);
-            item.setTranslationY(translationY);
-            final ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(item,
-                    PropertyValuesHolder.ofFloat("translationX", translationX, 0),
-                    PropertyValuesHolder.ofFloat("translationY", translationY, 0));
-            animator.setDuration(50L);
-            animator.start();
+            if (oldX != newX || oldY != newY) {
+                final int translationX = oldX - newX;
+                final int translationY = oldY - newY;
+                item.setTranslationX(translationX);
+                item.setTranslationY(translationY);
+                final ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(item,
+                        PropertyValuesHolder.ofFloat("translationX", translationX, 0),
+                        PropertyValuesHolder.ofFloat("translationY", translationY, 0));
+                animator.setDuration(50L);
+                animator.start();
+            }
         }
 
         @Override
         public void onUpdateOtherItemsLocation(View item, int oldX, int oldY, int newX, int newY) {
-            final int translationX = oldX - newX;
-            final int translationY = oldY - newY;
-            item.setTranslationX(translationX);
-            item.setTranslationY(translationY);
-            final ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(item,
-                    PropertyValuesHolder.ofFloat("translationX", translationX, 0),
-                    PropertyValuesHolder.ofFloat("translationY", translationY, 0));
-            animator.setDuration(200L);
-            animator.start();
+            if (oldX != newX || oldY != newY) {
+                final int translationX = oldX - newX;
+                final int translationY = oldY - newY;
+                item.setTranslationX(translationX);
+                item.setTranslationY(translationY);
+                final ObjectAnimator animator = ObjectAnimator.ofPropertyValuesHolder(item,
+                        PropertyValuesHolder.ofFloat("translationX", translationX, 0),
+                        PropertyValuesHolder.ofFloat("translationY", translationY, 0));
+                animator.setDuration(200L);
+                animator.start();
+            }
         }
     }
 }
