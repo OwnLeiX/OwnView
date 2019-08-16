@@ -18,7 +18,6 @@ import lx.own.R;
 
 /**
  * <b>上屏后拿着自己的子View挨个翻转的FrameLayout</b><br/>
- * 2.1.2 抢唱房间推荐理由翻转动画用，懒得在外面写代码动画来动画去的，所以写了个这个
  *
  * @author Lei.X
  *         Created on 7/5/2019.

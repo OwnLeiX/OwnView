@@ -20,13 +20,8 @@ import lx.own.R;
  * <p>状态布局，用于显示加载失败-重新加载-加载中的新需求</p><br/>
  *
  * @author Lx
- * @date 23/12/2016
- * <p>
- * 支持自定义属性.以便各个业务根据需要自己调整
- * app:stateFrame_fail_layout,stateFrame_loading_layout
- * @update by xjunjie@gmail.com 2019/6/24 15:33
+ * 23/12/2016
  */
-@SuppressWarnings("Convert2Lambda")
 public class StateFrameLayout extends FrameLayout {
 
     public StateFrameLayout(@NonNull Context context) {

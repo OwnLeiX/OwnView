@@ -26,7 +26,7 @@ import lx.own.view.online.entity.LyricWord;
 
 
 /**
- * 金曲抢唱房间的歌词控件
+ * 歌词控件
  * Created By Lei.X on 2019/05/14
  */
 public class LyricView2 extends View {
