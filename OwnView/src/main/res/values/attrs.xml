@@ -10,13 +10,6 @@
         <attr name="strokeColor" format="color|reference" />
         <attr name="coverStroke" format="boolean" />
     </declare-styleable>
-    <declare-styleable name="FlowLayout">
-        <attr name="flowLayout_horizontalPadding" format="dimension" />
-        <attr name="flowLayout_verticalPadding" format="dimension" />
-        <attr name="flowLayout_maxLines" format="integer" />
-        <attr name="flowLayout_fillMode" format="boolean" />
-        <attr name="flowLayout_dividerStartAndEnd" format="boolean" />
-    </declare-styleable>
 
     <declare-styleable name="ExpandableVerticalLinearLayout">
         <attr name="expandableVerticalLinearLayout_hintText" format="string" />
@@ -49,6 +42,7 @@
         <attr name="simpleCircleProgressBar_progress" format="integer" />
     </declare-styleable>
 
+    <!-- 歌词控件 -->
     <declare-styleable name="LyricView2">
         <attr name="lyricView2_textSize" format="reference|dimension" />
         <attr name="lyricView2_textColor" format="reference|color" />
@@ -81,7 +75,7 @@
         <attr name="loopOverturnLayout_displayDuration" format="integer" />
         <attr name="loopOverturnLayout_overturnDuration" format="integer" />
     </declare-styleable>
-
+    <!-- 静音灯 -->
     <declare-styleable name="MuteLampView">
         <attr name="muteLampView_minRadius" format="reference|dimension" />
         <attr name="muteLampView_maxRadius" format="reference|dimension" />
@@ -94,5 +88,23 @@
         <attr name="muteLampView_pointDelayPercent" format="float" />
         <attr name="muteLampView_fadeout" format="boolean" />
         <attr name="muteLampView_fadeoutTime" format="integer" />
+    </declare-styleable>
+    <!-- 单一类型流式布局 -->
+    <declare-styleable name="SingleTypeFlowLayout">
+        <attr name="flowLayout_horizontalPadding" format="dimension" />
+        <attr name="flowLayout_verticalPadding" format="dimension" />
+        <attr name="flowLayout_maxLines" format="integer" />
+        <attr name="flowLayout_fillMode" format="boolean" />
+        <attr name="flowLayout_dividerStartAndEnd" format="boolean" />
+        <attr name="flowLayout_gravity" format="enum">
+            <enum name="left" value="0" />
+            <enum name="right" value="1" />
+            <enum name="center" value="2" />
+        </attr>
+    </declare-styleable>
+
+    <!-- 可拖动的单一类型流式布局 -->
+    <declare-styleable name="DragSupportSingleTypeFlowLayout">
+        <attr name="dragSupportSingleTypeFlowLayout_replaceDuration" format="integer" />
     </declare-styleable>
 </resources>

@@ -1,10 +1,14 @@
 package lx.own.view.online;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.RectF;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -14,73 +18,80 @@ import lx.own.view.online.tools.SingleTypeViewRecyclePool;
 
 public class SingleTypeFlowLayout extends ViewGroup {
 
-    private final int FLAG_NEVER_MEASURED = 1;
-    private final int FLAG_CONTENT_CHANGED = 1 << 1;
-    private final int FLAG_SPEC_CHANGED = 1 << 2;
-    private final int FLAG_LAYOUT_AGAIN = 1 << 3;
+    public static final int LEFT = 0;
+    public static final int RIGHT = 1;
+    public static final int CENTER = 2;
+
+    static final int FLAG_NEVER_MEASURED = 1;
+    static final int FLAG_CONTENT_CHANGED = 1 << 1;
+    static final int FLAG_SPEC_CHANGED = 1 << 2;
+    static final int FLAG_LAYOUT_AGAIN = 1 << 3;
+    static final int FLAG_INTERCEPT_REFRESH = 1 << 4;
+    static final int MASK_MEASURE = FLAG_NEVER_MEASURED | FLAG_CONTENT_CHANGED | FLAG_SPEC_CHANGED;
 
     private int mFlags = FLAG_NEVER_MEASURED;
-    private ArrayList<Line> mLines;
-    private LinkedList<View> mDisplayViews;
-    private int mWidth, mHeight;
-    private int mContentWidth, mContentHeight;
+    protected final ArrayList<Line> mLines;
+    protected final LinkedList<View> mDisplayViews;
+    protected int mWidth, mHeight, mContentWidth, mContentHeight, mHorizontalPadding, mVerticalPadding, maxLines = -1;
+    protected int preWMeasureSpec, preHMeasureSpec;
+    protected int mGravity = LEFT;
 
-    private int mHorizontalPadding;
-    private int mVerticalPadding;
-
-    private int maxLines = -1;
-    private int preWMeasureSpec, preHMeasureSpec;
-    private BaseFlowItemAdapter mAdapter;
+    protected boolean fillMode = false;
+    protected boolean dividerStartAndEnd = false;
+    private int interceptedRefreshTimeCount;
+    protected BaseFlowItemAdapter mAdapter;
     private SingleTypeViewRecyclePool mRecycler;
-    private boolean fillMode = false;
-    private boolean dividerStartAndEnd = false;
 
     public SingleTypeFlowLayout(Context context) {
-        this(context, null);
+        super(context);
+        this.mLines = new ArrayList<>();
+        this.mDisplayViews = new LinkedList<>();
+        this.init(context, null);
     }
 
     public SingleTypeFlowLayout(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
+        super(context, attrs);
+        this.mLines = new ArrayList<>();
+        this.mDisplayViews = new LinkedList<>();
+        this.init(context, attrs);
     }
 
     public SingleTypeFlowLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context, attrs);
+        this.mLines = new ArrayList<>();
+        this.mDisplayViews = new LinkedList<>();
+        this.init(context, attrs);
     }
 
-    //    public FlowLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-    //        super(context, attrs, defStyleAttr, defStyleRes);
-    //    }
-
-    private void init(Context context, AttributeSet attrs) {
-        mLines = new ArrayList<>();
-        mDisplayViews = new LinkedList<>();
-        if (attrs != null) {
-            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FlowLayout);
-            if (typedArray != null) {
-                mHorizontalPadding = typedArray.getDimensionPixelSize(R.styleable.FlowLayout_flowLayout_horizontalPadding, 0);
-                mVerticalPadding = typedArray.getDimensionPixelSize(R.styleable.FlowLayout_flowLayout_verticalPadding, 0);
-                maxLines = typedArray.getInteger(R.styleable.FlowLayout_flowLayout_maxLines, -1);
-                fillMode = typedArray.getBoolean(R.styleable.FlowLayout_flowLayout_fillMode, false);
-                dividerStartAndEnd = typedArray.getBoolean(R.styleable.FlowLayout_flowLayout_dividerStartAndEnd, false);
-                typedArray.recycle();
-            }
-        }
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public SingleTypeFlowLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+        this.mLines = new ArrayList<>();
+        this.mDisplayViews = new LinkedList<>();
+        this.init(context, attrs);
     }
 
-    private void checkMeasureSpec(int widthMeasureSpec, int heightMeasureSpec) {
-        if (preWMeasureSpec != widthMeasureSpec || preHMeasureSpec != heightMeasureSpec) {
-            mFlags |= FLAG_SPEC_CHANGED;
-            preWMeasureSpec = widthMeasureSpec;
-            preHMeasureSpec = heightMeasureSpec;
+    public void setAdapter(BaseFlowItemAdapter adapter) {
+        this.mAdapter = adapter;
+        if (mAdapter != null) {
+            mAdapter.setFlowLayout(this);
         }
+        refresh();
+    }
+
+    public SingleTypeViewRecyclePool getSingleTypeViewRecyclePool() {
+        return mRecycler;
+    }
+
+    public void setSingleTypeViewRecyclePool(SingleTypeViewRecyclePool mRecycler) {
+        this.mRecycler = mRecycler;
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         checkMeasureSpec(widthMeasureSpec, heightMeasureSpec);
-        if ((mFlags & (FLAG_NEVER_MEASURED | FLAG_CONTENT_CHANGED | FLAG_SPEC_CHANGED)) > 0) {
-            mFlags &= ~(FLAG_NEVER_MEASURED | FLAG_CONTENT_CHANGED | FLAG_SPEC_CHANGED);
+        if ((mFlags & MASK_MEASURE) > 0) {
+            mFlags &= ~MASK_MEASURE;
             final int count = mAdapter == null ? 0 : mAdapter.getCount();
             mWidth = MeasureSpec.getSize(widthMeasureSpec);
             mContentWidth = mWidth - getPaddingLeft() - getPaddingRight();
@@ -90,33 +101,124 @@ public class SingleTypeFlowLayout extends ViewGroup {
             final int defaultChildMeasureSpec = getChildMeasureSpec(MeasureSpec.UNSPECIFIED, 0, LayoutParams.WRAP_CONTENT);
             int childWSpec = defaultChildMeasureSpec;
             int childHSpec = defaultChildMeasureSpec;
-            for (int i = 0; i < count; i++) {
-                child = mAdapter.getView(mRecycler == null ? null : mRecycler.obtain(), i, this);
-                if (child == null)
-                    continue;
-                childLayoutParams = child.getLayoutParams();
-                if (childLayoutParams != null) {
-                    childWSpec = getChildMeasureSpec(MeasureSpec.makeMeasureSpec(mContentWidth, MeasureSpec.EXACTLY), 0, childLayoutParams.width);
-                    childHSpec = getChildMeasureSpec(MeasureSpec.UNSPECIFIED, 0, childLayoutParams.height);
+            synchronized (mLines) {
+                for (int i = 0; i < count; i++) {
+                    child = mAdapter.getView(mRecycler == null ? null : mRecycler.obtain(), i, this);
+                    if (child == null)
+                        continue;
+                    childLayoutParams = child.getLayoutParams();
+                    if (childLayoutParams != null) {
+                        //Fixme 这里有个系统bug，Android 5.1 360F4，在TextView内文本正确的情况下，measure出来的width不对。我也不知道为什么
+                        //Fixme 经研究发现，mContentWidth不变的情况下，TextView会保持原width不重新measure。
+                        if (child instanceof TextView && Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                            final TextView castedChild = (TextView) child;
+                            final int measuredWidth = (int) (castedChild.getPaint().measureText(castedChild.getText() == null ? "" : castedChild.getText().toString()) + child.getPaddingLeft() + child.getPaddingRight() + 0.5f);
+                            childWSpec = getChildMeasureSpec(MeasureSpec.EXACTLY, 0, measuredWidth);
+                        } else {
+                            childWSpec = getChildMeasureSpec(MeasureSpec.makeMeasureSpec(mContentWidth, MeasureSpec.EXACTLY), 0, childLayoutParams.width);
+                        }
+                        childHSpec = getChildMeasureSpec(MeasureSpec.UNSPECIFIED, 0, childLayoutParams.height);
+                    }
+                    child.measure(childWSpec, childHSpec);
+                    if (!layoutChild(child, fillMode ? 0 : Math.max(0, mLines.size() - 1), i))
+                        break;
                 }
-                child.measure(childWSpec, childHSpec);
-                if (!layoutChild(child, fillMode ? 0 : Math.max(0, mLines.size() - 1), i)) break;
-            }
-            mContentHeight = 0;
-            if (MeasureSpec.getMode(heightMeasureSpec) != MeasureSpec.EXACTLY) {
-                for (Line line : mLines) {
-                    mContentHeight += line.getHeight();
+                mContentHeight = 0;
+                if (MeasureSpec.getMode(heightMeasureSpec) != MeasureSpec.EXACTLY) {
+                    for (Line line : mLines) {
+                        mContentHeight += line.getHeight();
+                    }
+                    mContentHeight -= mVerticalPadding;
+                    if (mContentHeight < 0)
+                        mContentHeight = 0;
+                    mHeight = mContentHeight + getPaddingBottom() + getPaddingTop();
+                } else {
+                    mHeight = MeasureSpec.getSize(heightMeasureSpec);
                 }
-                mContentHeight -= mVerticalPadding;
-                if (mContentHeight < 0)
-                    mContentHeight = 0;
-                mHeight = mContentHeight + getPaddingBottom() + getPaddingTop();
-            } else {
-                mHeight = MeasureSpec.getSize(heightMeasureSpec);
             }
             mFlags |= FLAG_LAYOUT_AGAIN;
         }
         setMeasuredDimension(mWidth, mHeight);
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        if ((mFlags & FLAG_LAYOUT_AGAIN) == 0) return;
+        mFlags &= ~FLAG_LAYOUT_AGAIN;
+        int top = getPaddingTop();
+        Line line;
+        synchronized (mLines) {
+            for (int position = 0; position < mLines.size(); position++) {
+                line = mLines.get(position);
+                if (line == null)
+                    continue;
+                float centerVertical = (top + top + line.getContentHeight()) / 2.0f;
+                int left;
+                if (mGravity == RIGHT) {
+                    final int right = mContentWidth - mHorizontalPadding;
+                    left = right - line.getWidth();
+                } else if (mGravity == CENTER) {
+                    left = (dividerStartAndEnd ? mHorizontalPadding : 0) + getPaddingLeft();
+                    final int right = r - l - getPaddingRight() - (dividerStartAndEnd ? mHorizontalPadding : 0);
+                    final int superfluousSpace = right - left - line.getWidth();//剩余的空白
+                    left = (int) (left + superfluousSpace / 2.0f + 0.5f);
+                } else {
+                    left = (dividerStartAndEnd ? mHorizontalPadding : 0) + getPaddingLeft();
+                }
+                line.mLaidArea.left = left;
+                line.mLaidArea.top = top;
+                int childWidth;
+                float halfHeight;
+                for (View item : line.mViews) {
+                    childWidth = item.getMeasuredWidth();
+                    halfHeight = item.getMeasuredHeight() / 2.0f;
+                    item.layout(left, (int) (centerVertical - halfHeight), left + childWidth, (int) (centerVertical + halfHeight));
+                    left += childWidth + mHorizontalPadding;
+                }
+                line.mLaidArea.right = left + line.width;
+                top += line.getHeight();
+                line.mLaidArea.bottom = top;
+            }
+        }
+    }
+
+    protected void refresh() {
+        if (!isInterceptRefresh()) {
+            reset(true);
+            requestLayout();
+        } else {
+            interceptedRefreshTimeCount++;
+        }
+    }
+
+    final protected void setInterceptRefresh(boolean intercept) {
+        if (intercept) {
+            mFlags |= FLAG_INTERCEPT_REFRESH;
+        } else {
+            mFlags &= ~FLAG_INTERCEPT_REFRESH;
+            if (interceptedRefreshTimeCount > 0)
+                refresh();
+            interceptedRefreshTimeCount = 0;
+        }
+    }
+
+    final protected boolean isInterceptRefresh() {
+        return (mFlags & FLAG_INTERCEPT_REFRESH) != 0;
+    }
+
+    private void init(Context context, AttributeSet attrs) {
+        if (attrs != null) {
+            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.SingleTypeFlowLayout);
+            if (typedArray != null) {
+                mHorizontalPadding = typedArray.getDimensionPixelSize(R.styleable.SingleTypeFlowLayout_flowLayout_horizontalPadding, 0);
+                mVerticalPadding = typedArray.getDimensionPixelSize(R.styleable.SingleTypeFlowLayout_flowLayout_verticalPadding, 0);
+                maxLines = typedArray.getInteger(R.styleable.SingleTypeFlowLayout_flowLayout_maxLines, -1);
+                fillMode = typedArray.getBoolean(R.styleable.SingleTypeFlowLayout_flowLayout_fillMode, false);
+                dividerStartAndEnd = typedArray.getBoolean(R.styleable.SingleTypeFlowLayout_flowLayout_dividerStartAndEnd, false);
+                mGravity = typedArray.getInteger(R.styleable.SingleTypeFlowLayout_flowLayout_gravity, LEFT);
+                typedArray.recycle();
+            }
+        }
     }
 
     private boolean layoutChild(View child, int line, int position) {
@@ -124,7 +226,7 @@ public class SingleTypeFlowLayout extends ViewGroup {
             return false;
         Line l;
         if (mLines.size() <= line) {
-            l = new Line(mHorizontalPadding, mVerticalPadding);
+            l = new Line(mHorizontalPadding, mVerticalPadding, position);
             mLines.add(l);
         } else {
             l = mLines.get(line);
@@ -149,121 +251,36 @@ public class SingleTypeFlowLayout extends ViewGroup {
             mFlags |= FLAG_CONTENT_CHANGED;
     }
 
-    @Override
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        if ((mFlags & FLAG_LAYOUT_AGAIN) == 0) return;
-        mFlags &= ~FLAG_LAYOUT_AGAIN;
-        int top = getPaddingTop();
-        Line line = null;
-        for (int position = 0; position < mLines.size(); position++) {
-            line = mLines.get(position);
-            if (line == null)
-                continue;
-            float centerVertical = (top + top + line.getContentHeight()) / 2.0f;
-            int left = (dividerStartAndEnd ? mHorizontalPadding : 0) + getPaddingLeft();
-            //强行拉满每一行
-            //			int right = mContentWidth - mHorizontalPadding;
-            //            int superfluousSpace = right - left - line.getWidth();
-            //            float singleSuperfluousSpace = superfluousSpace * 1.0f / line.getViewCount() / 2.0f;
-            for (View mView : line.mViews) {
-//                mView.measure(MeasureSpec.makeMeasureSpec(mView.getMeasuredWidth() + singleSuperfluousSpace * 2.0f, MeasureSpec.EXACTLY),
-//                        MeasureSpec.makeMeasureSpec(mView.getMeasuredHeight(), MeasureSpec.EXACTLY));
-                int childWidth = mView.getMeasuredWidth();
-                float halfHeight = mView.getMeasuredHeight() / 2.0f;
-                mView.layout(left, (int) (centerVertical - halfHeight), left + childWidth, (int) (centerVertical + halfHeight));
-                left += childWidth + mHorizontalPadding;
-            }
-            top += line.getHeight();
+    private void checkMeasureSpec(int widthMeasureSpec, int heightMeasureSpec) {
+        if (preWMeasureSpec != widthMeasureSpec || preHMeasureSpec != heightMeasureSpec) {
+            mFlags |= FLAG_SPEC_CHANGED;
+            preWMeasureSpec = widthMeasureSpec;
+            preHMeasureSpec = heightMeasureSpec;
         }
-    }
-
-    public int getVerticalPadding() {
-        return mVerticalPadding;
-    }
-
-    public void setVerticalPadding(int verticalPadding) {
-        this.mVerticalPadding = verticalPadding;
-        refresh();
-    }
-
-    public int getHorizontalPadding() {
-        return mHorizontalPadding;
-    }
-
-    public void setHorizontalPadding(int horizontalPadding) {
-        this.mHorizontalPadding = horizontalPadding;
-        refresh();
-    }
-
-    public int getMaxLines() {
-        return maxLines;
-    }
-
-    public void setMaxLines(int maxLines) {
-        if (maxLines <= 0) {
-            this.maxLines = -1;
-        } else {
-            this.maxLines = maxLines;
-        }
-        refresh();
-    }
-
-    public void setAdapter(BaseFlowItemAdapter adapter) {
-        this.mAdapter = adapter;
-        if (mAdapter != null) {
-            mAdapter.setFlowLayout(this);
-        }
-        refresh();
-    }
-
-    public void setFillMode(boolean fill) {
-        if (fillMode != fill) {
-            this.fillMode = fill;
-            refresh();
-        }
-    }
-
-    public void setDividerStartAndEnd(boolean dividerStartAndEnd) {
-        if (this.dividerStartAndEnd != dividerStartAndEnd) {
-            this.dividerStartAndEnd = dividerStartAndEnd;
-            refresh();
-        }
-    }
-
-    private void refresh() {
-        reset(true);
-        requestLayout();
-    }
-
-    public SingleTypeViewRecyclePool getSingleTypeViewRecyclePool() {
-        return mRecycler;
-    }
-
-    public void setSingleTypeViewRecyclePool(SingleTypeViewRecyclePool mRecycler) {
-        this.mRecycler = mRecycler;
     }
 
     static class Line {
-        public ArrayList<View> mViews;
-        public int width;
-        public int height;
+        ArrayList<View> mViews;
+        int width;
+        int height;
 
-        public int horizontalPadding;
-        public int verticalPadding;
+        int horizontalPadding;
+        int verticalPadding;
+        final int startPosition;
 
-        public Line() {
-            this(0, 0);
-        }
+        RectF mLaidArea;
 
-        public Line(int horizontalPadding, int verticalPadding) {
+        Line(int horizontalPadding, int verticalPadding, int startPosition) {
             mViews = new ArrayList<>();
             width = 0;
             height = 0;
             this.horizontalPadding = horizontalPadding;
             this.verticalPadding = verticalPadding;
+            this.mLaidArea = new RectF();
+            this.startPosition = startPosition;
         }
 
-        public void addView(View view) {
+        void addView(View view) {
             if (mViews.size() == 0) {
                 width += view.getMeasuredWidth();
             } else {
@@ -273,56 +290,35 @@ public class SingleTypeFlowLayout extends ViewGroup {
             mViews.add(view);
         }
 
-        public int getViewCount() {
+        int getViewCount() {
             return mViews.size();
         }
 
-        public View getViewAt(int index) {
-            return mViews.get(index);
-        }
-
-        public int getWidth() {
+        int getWidth() {
             return width;
         }
 
-        public int getContentWidth() {
+        int getContentWidth() {
             return width - horizontalPadding * (getViewCount() - 1);
         }
 
-        public int getHeight() {
+        int getHeight() {
             return height + verticalPadding;
         }
 
-        public int getContentHeight() {
+        int getContentHeight() {
             return height;
         }
-
-        public int getVerticalPadding() {
-            return verticalPadding;
-        }
-
-        public void setVerticalPadding(int verticalPadding) {
-            this.verticalPadding = verticalPadding;
-        }
-
-        public int getHorizontalPadding() {
-            return horizontalPadding;
-        }
-
-        public void setHorizontalPadding(int horizontalPadding) {
-            this.horizontalPadding = horizontalPadding;
-        }
-
     }
 
     public static abstract class BaseFlowItemAdapter {
-        private SingleTypeFlowLayout mSingleTypeFlowLayout;
+        protected SingleTypeFlowLayout mSingleTypeFlowLayout;
 
         private void setFlowLayout(SingleTypeFlowLayout singleTypeFlowLayout) {
             this.mSingleTypeFlowLayout = singleTypeFlowLayout;
         }
 
-        final public void notifyDataSetChanged() {
+        public void notifyDataSetChanged() {
             if (mSingleTypeFlowLayout != null) {
                 mSingleTypeFlowLayout.refresh();
             }
