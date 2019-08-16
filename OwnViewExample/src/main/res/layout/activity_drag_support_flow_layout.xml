@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorGray"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="touch to drag"
+        android:textColor="@color/colorWhite"
+        android:textSize="20sp" />
+
+    <lx.own.view.online.DragSupportSingleTypeFlowLayout
+        android:id="@+id/dsstfl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingTop="40dp"
+        app:dragSupportSingleTypeFlowLayout_replaceDuration="500"
+        app:flowLayout_dividerStartAndEnd="false"
+        app:flowLayout_fillMode="false"
+        app:flowLayout_gravity="left"
+        app:flowLayout_horizontalPadding="5dp"
+        app:flowLayout_verticalPadding="5dp" />
+</FrameLayout>

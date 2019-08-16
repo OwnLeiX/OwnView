@@ -18,19 +18,23 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.RipplePlayerView).setOnClickListener(listener);
         findViewById(R.id.SingleTypeExpandableVerticalLinearLayout).setOnClickListener(listener);
         findViewById(R.id.SingleTypeFlowLayout).setOnClickListener(listener);
+        findViewById(R.id.DragSupportFlowLayout).setOnClickListener(listener);
     }
 
-    private class ClickListener extends OwnClickListener{
+    private class ClickListener extends OwnClickListener {
         @Override
         protected void onValidClick(View v) {
-            switch (v.getId()){
+            switch (v.getId()) {
                 case R.id.RipplePlayerView:
                     break;
                 case R.id.SingleTypeExpandableVerticalLinearLayout:
-                    startActivity(new Intent(MainActivity.this,SingleTypeExpandableVerticalLinearLayoutSample.class));
+                    startActivity(new Intent(MainActivity.this, SingleTypeExpandableVerticalLinearLayoutSample.class));
                     break;
                 case R.id.SingleTypeFlowLayout:
-                    startActivity(new Intent(MainActivity.this,FlowLayoutSample.class));
+                    startActivity(new Intent(MainActivity.this, FlowLayoutSample.class));
+                    break;
+                case R.id.DragSupportFlowLayout:
+                    startActivity(new Intent(MainActivity.this, DragSupportSingleTypeFlowLayoutSample.class));
                     break;
             }
         }

@@ -15,8 +15,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".FlowLayoutSample"/>
-        <activity android:name=".SingleTypeExpandableVerticalLinearLayoutSample"/>
+        <activity android:name=".FlowLayoutSample" />
+        <activity android:name=".SingleTypeExpandableVerticalLinearLayoutSample" />
+        <activity android:name=".DragSupportSingleTypeFlowLayoutSample" />
     </application>
 
 </manifest>

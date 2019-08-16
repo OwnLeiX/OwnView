@@ -37,4 +37,13 @@
         android:background="@color/colorDarkGray"
         android:layout_marginTop="20dp"
         android:text="FlowLayout"/>
+    <Button
+        android:id="@+id/DragSupportFlowLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAllCaps="false"
+        android:textColor="@color/colorWhite"
+        android:background="@color/colorDarkGray"
+        android:layout_marginTop="20dp"
+        android:text="DragSupportFlowLayout"/>
 </LinearLayout>
