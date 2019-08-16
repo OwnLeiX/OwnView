@@ -12,12 +12,13 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.annotation.MainThread;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewParent;
+
+import androidx.annotation.MainThread;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;

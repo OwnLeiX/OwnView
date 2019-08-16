@@ -1,16 +1,14 @@
 package lx.own.view.offline;
 
-import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
-import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
+
+import androidx.customview.widget.ViewDragHelper;
 
 import java.util.ArrayList;
 import java.util.Random;

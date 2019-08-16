@@ -9,7 +9,8 @@ import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.Region;
 import android.util.AttributeSet;
-import android.widget.ImageView;
+
+import androidx.appcompat.widget.AppCompatImageView;
 
 /**
  * <p> </p><br/>
@@ -18,7 +19,7 @@ import android.widget.ImageView;
  * @date 2017/1/13
  */
 
-public class CircleImageView extends ImageView {
+public class CircleImageView extends AppCompatImageView {
 
     private Bitmap mBitmap;
     private Rect mRect = new Rect();

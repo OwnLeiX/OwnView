@@ -1,31 +1,43 @@
-apply plugin: 'com.android.library'
+ext {
+    doBuild = false
+}
 
-android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.3"
+if (!project.hasProperty("ext") || project.ext.doBuild) {
+    apply plugin: 'com.android.library'
 
-    defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 24
-        versionCode 1
-        versionName "1.0"
-
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
+    dependencies {
+        api 'androidx.appcompat:appcompat:1.0.2'
     }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+    android {
+        compileSdkVersion 28
+
+        defaultConfig {
+            minSdkVersion 14
+            versionCode 1
+            versionName "1.0"
+        }
+
+        android.libraryVariants.all { variant ->
+            variant.outputs.all { output ->
+                if (variant.buildType.name == 'release') {
+                    def newAArName = "${project.name}-${defaultConfig.versionName}.aar"
+                    outputFileName = new File("../../../" + variant.name, newAArName)
+                } else {
+                    def newAArName = "${project.name}-${defaultConfig.versionName}-${variant.buildType.name}.aar"
+                    outputFileName = new File(newAArName)
+                }
+            }
         }
     }
+
+    task releaseJar(type: Jar, dependsOn: 'build') {
+        exclude('test/', 'R.class')
+        exclude { it.name.startsWith('R$') }
+    }
+} else {
+    configurations.maybeCreate("default")
+    artifacts.add("default", file('release/OwnView-1.0.aar'))
 }
 
-dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    compile 'com.android.support:appcompat-v7:24.2.1'
-    testCompile 'junit:junit:4.12'
-}
+

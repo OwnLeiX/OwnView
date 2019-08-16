@@ -1,149 +1,235 @@
 package lx.own.view.online;
 
+import android.annotation.TargetApi;
 import android.content.Context;
-import android.support.annotation.IntDef;
-import android.support.annotation.LayoutRes;
+import android.content.res.TypedArray;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.FrameLayout;
 
+import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import lx.own.R;
+
 /**
  * <p>状态布局，用于显示加载失败-重新加载-加载中的新需求</p><br/>
  *
  * @author Lx
- * 23/12/2016
+ * @date 23/12/2016
+ * <p>
+ * 支持自定义属性.以便各个业务根据需要自己调整
+ * app:stateFrame_fail_layout,stateFrame_loading_layout
+ * @update by xjunjie@gmail.com 2019/6/24 15:33
  */
+@SuppressWarnings("Convert2Lambda")
+public class StateFrameLayout extends FrameLayout {
 
-public class StateFrameLayout extends FrameLayout implements View.OnClickListener {
-
-    @IntDef({STATE_LOADING, STATE_FAILED, STATE_SUCCESS, STATE_EMPTY})
-    private @interface State {
+    public StateFrameLayout(@NonNull Context context) {
+        super(context);
+        this.init(context, null, 0);
     }
 
-    @Override
-    public void onClick(View v) {
-        if (v == mFailedView && mOnFailedViewClickedListener != null)
-            mOnFailedViewClickedListener.onFailedViewClicked();
+    public StateFrameLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
+        super(context, attrs);
+        this.init(context, attrs, 0);
     }
 
-    public interface OnFailedViewClickedListener {
-        void onFailedViewClicked();
+    public StateFrameLayout(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        this.init(context, attrs, defStyleAttr);
     }
 
-    private OnFailedViewClickedListener mOnFailedViewClickedListener;
-
-    public OnFailedViewClickedListener getOnRetryListener() {
-        return mOnFailedViewClickedListener;
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public StateFrameLayout(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+        this.init(context, attrs, defStyleAttr);
     }
 
-    public void setOnRetryListener(OnFailedViewClickedListener l) {
-        this.mOnFailedViewClickedListener = l;
+    public interface OnRetryListener {
+        void onRetry();
     }
 
-    public static final int STATE_LOADING = 1;
-    public static final int STATE_FAILED = 1 << 1;
-    public static final int STATE_SUCCESS = 1 << 2;
-    public static final int STATE_EMPTY = 1 << 3;
+    private OnRetryListener mOnRetryListener;
+
+    public OnRetryListener getOnRetryListener() {
+        return mOnRetryListener;
+    }
+
+    public void resetOnRetryListener(OnRetryListener mOnRetryListener) {
+        this.mOnRetryListener = mOnRetryListener;
+    }
 
     private int mState;
     private ViewStub mEmptyVS;
     private ViewStub mLoadingVS;
     private ViewStub mFailedVS;
 
-    private int mEmptyRes = -1;
-    private int mLoadingRes = -1;
-    private int mFailedRes = -1;
+    private int mEmptyRes;
+    private int mLoadingRes;  //默认
+    private int mFailedRes;    //默认
+    private int mInitState = STATE.LOADING;
 
     private View mEmptyView;
     private View mLoadingView;
     private View mFailedView;
 
-    public StateFrameLayout(Context context) {
-        this(context, null);
-    }
-
-    public StateFrameLayout(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
-
-    public StateFrameLayout(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init(context, attrs, defStyleAttr);
-    }
 
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        mState = STATE_LOADING;
+        mState = this.mInitState;
         LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         mEmptyVS = new ViewStub(getContext());
         mEmptyVS.setLayoutParams(params);
+        mEmptyVS.setLayoutResource(mEmptyRes);
         addView(mEmptyVS);
         mLoadingVS = new ViewStub(getContext());
         mLoadingVS.setLayoutParams(params);
+        mLoadingVS.setLayoutResource(mLoadingRes);
         addView(mLoadingVS);
         mFailedVS = new ViewStub(getContext());
         mFailedVS.setLayoutParams(params);
+        mFailedVS.setLayoutResource(mFailedRes);
         addView(mFailedVS);
+        refreshDisplayView();
     }
 
-    //	public StateLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-    //		super(context, attrs, defStyleAttr, defStyleRes);
-    //	}
-
-    @State
+    @StateRef
     public int getCurrentState() {
         return mState;
     }
 
-    public void setState(@State int state) {
-        mState = state;
+    public synchronized void setState(@StateRef int state) {
+        if ((this.mState & state) == 0) {
+            this.setStateSurely(state);
+        }
+    }
+
+    public synchronized void setStateSurely(@StateRef int state) {
+        this.mState = state;
         refreshDisplayView();
     }
 
-    public boolean resetmEmptyRes(@LayoutRes int mEmptyRes) {
-        this.mEmptyRes = mEmptyRes;
-        return mEmptyView == null;
+    public void setEmptyRes(int res) {
+        if (this.mEmptyRes != res) {
+            this.mEmptyRes = res;
+            if (mEmptyVS.getParent() == this)
+                this.removeView(mEmptyVS);
+            if (mEmptyView != null && mEmptyView.getParent() == this) {
+                this.removeView(mEmptyView);
+                mEmptyView = null;
+            }
+            final LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            mEmptyVS = new ViewStub(getContext());
+            mEmptyVS.setLayoutParams(params);
+            mEmptyVS.setLayoutResource(mEmptyRes);
+            addView(mEmptyVS);
+            refreshDisplayView();
+        }
     }
 
-    public boolean resetmLoadingRes(@LayoutRes int mLoadingRes) {
-        this.mLoadingRes = mLoadingRes;
-        return mLoadingView == null;
+    public void setLoadingRes(int res) {
+        if (this.mLoadingRes != res) {
+            this.mLoadingRes = res;
+            if (mLoadingVS.getParent() == this)
+                this.removeView(mLoadingVS);
+            if (mLoadingView != null && mLoadingView.getParent() == this) {
+                this.removeView(mLoadingView);
+                mLoadingView = null;
+            }
+            final LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            mLoadingVS = new ViewStub(getContext());
+            mLoadingVS.setLayoutParams(params);
+            mLoadingVS.setLayoutResource(mLoadingRes);
+            addView(mLoadingVS);
+            refreshDisplayView();
+        }
     }
 
-    public boolean resetmFailedRes(@LayoutRes int mFailedRes) {
-        this.mFailedRes = mFailedRes;
-        return mFailedView == null;
+    public void setFailedRes(int res) {
+        if (this.mFailedView == null && this.mFailedRes != res) {
+            this.mFailedRes = res;
+            if (mFailedVS.getParent() == this)
+                this.removeView(mFailedVS);
+            if (mFailedView != null && mFailedView.getParent() == this) {
+                this.removeView(mFailedView);
+                mFailedView = null;
+            }
+            final LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            mFailedVS = new ViewStub(getContext());
+            mFailedVS.setLayoutParams(params);
+            mFailedVS.setLayoutResource(mFailedRes);
+            addView(mFailedVS);
+            refreshDisplayView();
+        }
+    }
+
+    public View getEmptyView() {
+        return mEmptyView;
+    }
+
+    public View getLoadingView() {
+        return mLoadingView;
+    }
+
+    public View getFailedView() {
+        return mFailedView;
     }
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr) {
-
+        if (context != null && attrs != null) {
+            TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.StateFrameLayout);
+            if (typedArray != null) {
+                this.mFailedRes = typedArray.getResourceId(R.styleable.StateFrameLayout_stateFrame_fail_layout, NO_ID);
+                this.mLoadingRes = typedArray.getResourceId(R.styleable.StateFrameLayout_stateFrame_loading_layout, NO_ID);
+                this.mEmptyRes = typedArray.getResourceId(R.styleable.StateFrameLayout_stateFrame_empty_layout, NO_ID);
+                this.mInitState = typedArray.getInteger(R.styleable.StateFrameLayout_stateFrame_init_state, STATE.LOADING);
+                typedArray.recycle();
+            }
+        }
     }
 
     private void refreshDisplayView() {
         hideAllStatus();
         switch (mState) {
-            case STATE_LOADING:
-                if (buildLoadingView())
-                    mLoadingView.setVisibility(VISIBLE);
-                break;
-            case STATE_SUCCESS:
-
-                break;
-            case STATE_FAILED:
-                if (buildFailedView()) {
-                    mFailedView.setOnClickListener(this);
-                    mFailedView.setVisibility(VISIBLE);
+            case STATE.LOADING: {
+                if (mLoadingView == null) {
+                    mLoadingView = mLoadingVS.inflate();
                 }
-                break;
-            case STATE_EMPTY:
-                if (buildEmptyView())
-                    mEmptyView.setVisibility(VISIBLE);
-                break;
+                mLoadingView.setVisibility(VISIBLE);
+            }
+            break;
+            case STATE.SUCCESS: {
+            }
+            break;
+            case STATE.FAIL: {
+                if (mFailedView == null) {
+                    mFailedView = mFailedVS.inflate();
+                    mFailedView.setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (mOnRetryListener != null)
+                                mOnRetryListener.onRetry();
+                        }
+                    });
+                }
+                mFailedView.setVisibility(VISIBLE);
+            }
+            break;
+            case STATE.EMPTY: {
+                if (mEmptyView == null) {
+                    mEmptyView = mEmptyVS.inflate();
+                }
+                mEmptyView.setVisibility(VISIBLE);
+            }
+            break;
             default:
-                throw new IllegalArgumentException("Unknown State has been set!");
+                throw new IllegalArgumentException("Unknown STATE has been set!");
         }
     }
 
@@ -152,33 +238,18 @@ public class StateFrameLayout extends FrameLayout implements View.OnClickListene
             mEmptyView.setVisibility(View.GONE);
         if (mLoadingView != null)
             mLoadingView.setVisibility(View.GONE);
-        if (mFailedView != null) {
+        if (mFailedView != null)
             mFailedView.setVisibility(View.GONE);
-            mFailedView.setOnClickListener(null);
-        }
     }
 
-    private boolean buildEmptyView() {
-        if (mEmptyView == null && mEmptyRes != -1 && mEmptyVS.getParent() != null) {
-            mEmptyVS.setLayoutResource(mEmptyRes);
-            mEmptyView = mEmptyVS.inflate();
-        }
-        return mEmptyView != null;
+    @IntDef({STATE.LOADING, STATE.FAIL, STATE.SUCCESS, STATE.EMPTY})
+    @interface StateRef {
     }
 
-    private boolean buildFailedView() {
-        if (mFailedView == null && mFailedRes != -1 && mFailedVS.getParent() != null) {
-            mFailedVS.setLayoutResource(mFailedRes);
-            mFailedView = mFailedVS.inflate();
-        }
-        return mFailedView != null;
-    }
-
-    private boolean buildLoadingView() {
-        if (mLoadingView == null && mLoadingRes != -1 && mLoadingVS.getParent() != null) {
-            mLoadingVS.setLayoutResource(mLoadingRes);
-            mLoadingView = mLoadingVS.inflate();
-        }
-        return mLoadingView != null;
+    public interface STATE {
+        int LOADING = 1;
+        int FAIL = 1 << 1;
+        int SUCCESS = 1 << 2;
+        int EMPTY = 1 << 3;
     }
 }

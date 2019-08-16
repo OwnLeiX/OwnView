@@ -6,13 +6,15 @@ import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 
+import androidx.appcompat.widget.AppCompatImageView;
+
 /**
  * <b>无限旋转的ImageView</b><br/>
  *
  * @author Lei.X
  * Created on 6/27/2019.
  */
-public class InfiniteRotateImageView extends android.support.v7.widget.AppCompatImageView {
+public class InfiniteRotateImageView extends AppCompatImageView {
     public InfiniteRotateImageView(Context context) {
         super(context);
     }

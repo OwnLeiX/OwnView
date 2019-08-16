@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <declare-styleable name="StateFrameLayout">
+        <attr name="stateFrame_fail_layout" format="reference" />
+        <attr name="stateFrame_loading_layout" format="reference" />
+        <attr name="stateFrame_empty_layout" format="reference" />
+        <attr name="stateFrame_init_state" format="enum">
+            <enum name="loading" value="1" />
+            <enum name="fail" value="2" />
+            <enum name="success" value="4" />
+            <enum name="empty" value="8" />
+        </attr>
+    </declare-styleable>
+
     <declare-styleable name="RipplePlayerView">
         <attr name="ripplePadding" format="dimension" />
         <attr name="rippleRange" format="dimension" />

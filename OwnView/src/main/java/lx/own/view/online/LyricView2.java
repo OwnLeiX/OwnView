@@ -9,13 +9,14 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Looper;
-import android.support.annotation.AnyThread;
-import android.support.annotation.ColorInt;
-import android.support.annotation.MainThread;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
+
+import androidx.annotation.AnyThread;
+import androidx.annotation.ColorInt;
+import androidx.annotation.MainThread;
 
 import java.util.List;
 
